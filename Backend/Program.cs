@@ -11,6 +11,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var DevelopmentAllAllow = "_developmentAllAllow";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(DevelopmentAllAllow,
+        policy =>
+		{
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -18,6 +31,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors(DevelopmentAllAllow);
     app.UseSwagger();
     app.UseSwaggerUI();
 }
