@@ -7,8 +7,11 @@ public class Organisation
     [Key]
     public Guid Id { get; set; }
 
-    public virtual ICollection<Event> Events { get; } = [];
+    public ICollection<Event> Events { get; } = [];
 
     [Required]
     public String Name { get; set; } = "";
+
+    [Required]
+    public String Password { get; set; } = "";
 }

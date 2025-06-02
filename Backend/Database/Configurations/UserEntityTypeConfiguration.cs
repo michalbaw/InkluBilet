@@ -4,9 +4,9 @@ using InkluBilet.Database.Models;
 
 namespace InkluBilet.Database.Configurations;
 
-public class OrganisationsEntityTypeConfiguration : IEntityTypeConfiguration<Organisation>
+public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<Organisation> builder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
         builder
             .HasIndex(o => o.Name)

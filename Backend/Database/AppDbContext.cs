@@ -11,10 +11,13 @@ public class AppDbContext : DbContext
 
     public DbSet<Event> Events => Set<Event>();
     public DbSet<Organisation> Organisations => Set<Organisation>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Ticket> Tickets => Set<Ticket>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new OrganisationsEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new OrganisationEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
     }
 }

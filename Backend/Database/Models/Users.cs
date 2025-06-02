@@ -2,24 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InkluBilet.Database.Models;
 
-public class Event
+public class User
 {
     [Key]
     public Guid Id { get; set; }
 
-    public virtual Organisation Organisation { get; set; } = null!;
-
-    [Required]
-    public Guid OrganisationId { get; set; }
-
     [Required]
     public String Name { get; set; } = "";
 
+    // Storing password as String is bad, but this app is just a demo, and should never be used anyway
     [Required]
-    public String Description { get; set; } = "";
-
-    [Required]
-    public String Time { get; set; } = "";
+    public String Password { get; set; } = "";
 
     public ICollection<Ticket> Tickets { get; } = [];
 }
