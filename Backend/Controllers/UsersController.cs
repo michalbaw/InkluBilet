@@ -30,8 +30,8 @@ public class UsersController(AppDbContext db) : ControllerBase
         return Ok();
     }
 
-    [HttpPost("LoginAsUser/{name}")]
-    public async Task<IActionResult> LoginAsUser(String name, [FromBody] String password)
+    [HttpPost("Login/{name}")]
+    public async Task<IActionResult> Login(String name, [FromBody] String password)
     {
         var u = await db.Users.Where(u => u.Name == name).Select(u => new { u.Id, u.Password }).FirstOrDefaultAsync();
         if (u == null)
