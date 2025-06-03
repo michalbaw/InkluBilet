@@ -29,8 +29,8 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         return Ok();
     }
 
-    [HttpPost("LoginAsOrganisation/{name}")]
-    public async Task<IActionResult> LoginAsOrganisation(String name, [FromBody] String password)
+    [HttpPost("Login/{name}")]
+    public async Task<IActionResult> Login(String name, [FromBody] String password)
     {
         var org = await db.Organisations.Where(o => o.Name == name).Select(o => new { o.Id, o.Password }).FirstOrDefaultAsync();
         if (org == null)
