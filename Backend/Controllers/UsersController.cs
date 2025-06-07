@@ -64,11 +64,50 @@ public class UsersController(AppDbContext db) : ControllerBase
         return Ok();
     }
 
-    [HttpGet("GetTickets/{id}")]
-    public async Task<IActionResult> GetTickets(Guid id)
+    [HttpGet("GetTicketList/{id}")]
+    public async Task<IActionResult> GetTicketList(Guid id)
     {
-        var tickets = await db.Tickets.Where(t => t.UserId == id).Select(t => new { t.Id, t.Event }).ToListAsync();
+        var tickets = await db.Tickets.Where(t => t.UserId == id)
+            .Select(t => new
+            {
+                t.Id,
+                Event = new
+                {
+                    t.Event.Id,
+                    t.Event.Name,
+                    t.Event.Time,
+                    t.Event.Location,
+                    t.Event.Description,
+                    t.Event.Accessibility,
+                },
+                Organiser = t.Event.Organisation.Name,
+            }).ToListAsync();
         return Ok(tickets);
     }
 
+    [HttpGet("GetTicket/{id}")]
+    public async Task<IActionResult> GetTicket(Guid id)
+    {
+        var ticket = await db.Tickets.Where(t => t.Id == id)
+            .Select(t => new
+            {
+                t.Id,
+                Event = new
+                {
+                    t.Event.Id,
+                    t.Event.Name,
+                    t.Event.Time,
+                    t.Event.Location,
+                    t.Event.Description,
+                    t.Event.Accessibility,
+                },
+                Organiser = t.Event.Organisation.Name,
+            })
+            .FirstOrDefaultAsync();
+        if (ticket == default)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
+    }
 }

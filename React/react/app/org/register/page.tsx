@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function OrgRegisterPage() {
+  const [name, setName] = useState('');
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,33 +18,29 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5154/api/Users/Login/${login}`, {
+      const response = await fetch('http://localhost:5154/api/Organisations/AddOrganisation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: `"${password}"`,
+        body: JSON.stringify({
+          name,
+          login,
+          password
+        }),
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('User not found');
-        } else if (response.status === 403) {
-          throw new Error('Invalid password');
-        } else {
-          throw new Error('Login failed');
+        if (response.status === 409) {
+          throw new Error('Organization with this name already exists');
         }
+        throw new Error('Registration failed');
       }
 
-      const data = await response.json();
-      
-      // Store the user ID in localStorage
-      localStorage.setItem('userId', data);
-      
-      // Redirect to events page
-      router.push('/events');
+      // Redirect to login page on success
+      router.push('/org/login');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+      setError(err instanceof Error ? err.message : 'An error occurred during registration');
     } finally {
       setIsLoading(false);
     }
@@ -54,22 +51,37 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Register new organization
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              create a new account
+            <Link href="/org/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              sign in to existing organization account
             </Link>
           </p>
           <div className="mt-2 text-center">
-            <Link href="/org/login" className="text-sm text-gray-500 hover:text-gray-700">
-              Are you an event organizer? Sign in to organization account
+            <Link href="/register" className="text-sm text-gray-500 hover:text-gray-700">
+              Want to buy tickets? Register as user instead
             </Link>
           </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Organization Display Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Organization Display Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
             <div>
               <label htmlFor="login" className="sr-only">
                 Login
@@ -78,10 +90,9 @@ export default function LoginPage() {
                 id="login"
                 name="login"
                 type="text"
-                autoComplete="username"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Login"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Login (used for signing in)"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
@@ -94,7 +105,6 @@ export default function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
@@ -124,7 +134,7 @@ export default function LoginPage() {
                   </svg>
                 </span>
               ) : (
-                'Sign in'
+                'Create organization'
               )}
             </button>
           </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function OrgLoginPage() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5154/api/Users/Login/${login}`, {
+      const response = await fetch(`http://localhost:5154/api/Organisations/Login/${login}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export default function LoginPage() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('User not found');
+          throw new Error('Organization not found');
         } else if (response.status === 403) {
           throw new Error('Invalid password');
         } else {
@@ -37,11 +37,11 @@ export default function LoginPage() {
 
       const data = await response.json();
       
-      // Store the user ID in localStorage
-      localStorage.setItem('userId', data);
+      // Store the organization ID in localStorage
+      localStorage.setItem('orgId', data);
       
-      // Redirect to events page
-      router.push('/events');
+      // Redirect to organization dashboard
+      router.push('/org/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
     } finally {
@@ -54,17 +54,17 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Sign in to organization account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              create a new account
+            <Link href="/org/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              register a new organization
             </Link>
           </p>
           <div className="mt-2 text-center">
-            <Link href="/org/login" className="text-sm text-gray-500 hover:text-gray-700">
-              Are you an event organizer? Sign in to organization account
+            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">
+              Want to buy tickets? Sign in as user instead
             </Link>
           </div>
         </div>
@@ -78,7 +78,6 @@ export default function LoginPage() {
                 id="login"
                 name="login"
                 type="text"
-                autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Login"

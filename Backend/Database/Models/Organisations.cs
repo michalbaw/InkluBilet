@@ -13,5 +13,8 @@ public class Organisation
     public String Name { get; set; } = "";
 
     [Required]
+    public String Login { get; set; } = "";
+
+    [Required]
     public String Password { get; set; } = "";
 }

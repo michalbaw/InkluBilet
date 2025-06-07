@@ -12,6 +12,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
     public struct OrganisationTemplate
     {
         public String Name { get; set; }
+        public String Login { get; set; }
         public String Password { get; set; }
     }
 
@@ -23,16 +24,16 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         {
             return Conflict("Organisation with specified name already exists.");
         }
-        var x = new Organisation { Name = o.Name, Password = o.Password };
+        var x = new Organisation { Name = o.Name, Login = o.Login, Password = o.Password };
         var y = await db.Organisations.AddAsync(x);
         await db.SaveChangesAsync();
         return Ok();
     }
 
-    [HttpPost("Login/{name}")]
-    public async Task<IActionResult> Login(String name, [FromBody] String password)
+    [HttpPost("Login/{login}")]
+    public async Task<IActionResult> Login(String login, [FromBody] String password)
     {
-        var org = await db.Organisations.Where(o => o.Name == name).Select(o => new { o.Id, o.Password }).FirstOrDefaultAsync();
+        var org = await db.Organisations.Where(o => o.Login == login).Select(o => new { o.Id, o.Password }).FirstOrDefaultAsync();
         if (org == null)
         {
             return NotFound();
@@ -60,23 +61,34 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         public String Name { get; set; }
         public String Description { get; set; }
         public String Time { get; set; }
+        public String Location { get; set; }
+        public EventAccessibility Accessibility { get; set; }
     }
 
     [HttpPost("AddEvent/{id}")]
     public async Task<IActionResult> AddEvent(Guid id, [FromBody] EventTemplate e)
     {
         var org = await db.Organisations.Where(o => o.Id == id).FirstOrDefaultAsync();
-        if (org == null) {
+        if (org == null)
+        {
             return NotFound("Organisation not found.");
         }
-        var x = new Event { Organisation = org, Name = e.Name, Description = e.Description, Time = e.Time };
+        var x = new Event
+        {
+            Organisation = org,
+            Name = e.Name,
+            Description = e.Description,
+            Time = e.Time,
+            Location = e.Location,
+            Accessibility = e.Accessibility
+        };
         var y = await db.Events.AddAsync(x);
         await db.SaveChangesAsync();
         return Ok();
     }
 
-    [HttpGet("GetEvents")]
-    public async Task<IActionResult> GetEvents()
+    [HttpGet("GetAllEvents")]
+    public async Task<IActionResult> GetAllEvents()
     {
         var x = await db.Events.Select(e => new
         {
@@ -84,9 +96,53 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             e.Name,
             e.Description,
             e.Time,
-            OrganisedBy = e.Organisation.Name
+            OrganisedBy = e.Organisation.Name,
+            e.Location,
+            e.Accessibility
         }).ToListAsync();
 
         return Ok(x);
+    }
+
+    [HttpGet("GetOrgEvents/{id}")]
+    public async Task<IActionResult> GetOrgEvents(Guid id)
+    {
+        var x = await db.Events.Where(e => e.OrganisationId == id).Select(e => new
+        {
+            e.Id,
+            e.Name,
+            e.Description,
+            e.Time,
+            e.Location,
+            e.Accessibility
+        }).ToListAsync();
+        return Ok(x);
+    }
+
+    public struct ChangeEventTemplate
+    {
+        public Guid EventId { get; set; }
+        public EventTemplate NewEvent { get; set; }
+    }
+
+    [HttpPut("ChangeEvent/{id}")]
+    public async Task<IActionResult> ChangeEvent(Guid id, [FromBody] ChangeEventTemplate newEvent)
+    {
+        Event? e = await db.Events.Where(e => e.Id == newEvent.EventId).FirstOrDefaultAsync();
+        if (e == null)
+        {
+            return NotFound();
+        }
+        if (e.OrganisationId != id)
+        {
+            return Forbid();
+        }
+        e.Name = newEvent.NewEvent.Name;
+        e.Description = newEvent.NewEvent.Description;
+        e.Time = newEvent.NewEvent.Time;
+        e.Location = newEvent.NewEvent.Location;
+        e.Accessibility = newEvent.NewEvent.Accessibility;
+        await db.SaveChangesAsync();
+        return Ok();
     }
 }
