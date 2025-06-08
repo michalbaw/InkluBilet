@@ -8,7 +8,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/login');
+    router.push('/events');
   }, [router]);
 
   return null; // No need to render anything as we're redirecting

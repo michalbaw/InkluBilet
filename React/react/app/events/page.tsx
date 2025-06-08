@@ -127,25 +127,42 @@ export default function EventsPage() {
     });
   };
 
+  const getLoginOrLogoutMenu = () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      return (
+        <button
+          onClick={handleLogout}
+          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Login
+        </button>
+      );
+    }
+	return (
+      <div className="flex items-center space-x-4">
+        <Link
+          href="/tickets"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200"
+        >
+          My Tickets
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Logout
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Available Events</h1>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/tickets"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200"
-            >
-              My Tickets
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Logout
-            </button>
-          </div>
+          {getLoginOrLogoutMenu()}
         </div>
 
         <div className="mb-6">
