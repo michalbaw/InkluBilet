@@ -99,7 +99,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             OrganisedBy = e.Organisation.Name,
             e.Location,
             e.Accessibility
-        }).ToListAsync();
+        }).OrderBy(e => e.Time).ToListAsync();
 
         return Ok(x);
     }
