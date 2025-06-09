@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="37.429302mm"
+   height="12.761269mm"
+   viewBox="0 0 37.429302 12.761269"
+   version="1.1"
+   id="svg1202"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1199" />
+  <g
+     id="layer1"
+     transform="translate(-5.2875916,-7.6779492)">
+    <g
+       id="g2189-1"
+       transform="matrix(2.063792,0,0,2.063792,675.19393,948.29997)">
+      <path
+         id="rect1752-6-7"
+         style="fill:none;stroke:#3daa40;stroke-width:0.350948;stroke-opacity:1"
+         d="m -317.12634,-455.59818 v 1.42298 a 1.5270218,1.5270218 0 0 1 1.20776,1.4929 1.5270218,1.5270218 0 0 1 -1.20776,1.49291 v 1.42367 h 10.48731 v -1.42367 a 1.5270218,1.5270218 0 0 1 -1.20843,-1.49291 1.5270218,1.5270218 0 0 1 1.20843,-1.4929 v -1.42298 z" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#3daa40;stroke-width:0.350948;stroke-dasharray:0.350948, 0.350948;stroke-dashoffset:0;stroke-opacity:1"
+         d="m -311.88269,-455.59817 v 5.83244"
+         id="path2088-1-7" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.73671px;font-family:'Unifont CSUR';-inkscape-font-specification:'Unifont CSUR';fill:#403eaa;fill-opacity:1;stroke:#403eaa;stroke-width:0.546044;stroke-opacity:1"
+       x="4.6869426"
+       y="16.609741"
+       id="text1698-0-1"><tspan
+         id="tspan1696-6-1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Quicksand Light';-inkscape-font-specification:'Quicksand Light, ';fill:#403eaa;fill-opacity:1;stroke:#403eaa;stroke-width:0.546044;stroke-opacity:1"
+         x="4.6869426"
+         y="16.609741">InkluBilet</tspan></text>
+  </g>
+</svg>
