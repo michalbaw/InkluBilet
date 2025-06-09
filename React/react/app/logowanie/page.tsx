@@ -61,6 +61,11 @@ export default function LoginPage() {
             </Link>
           </p>
           <div className="mt-2 text-center">
+            <Link href="/wydarzenia" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Przeglądaj wydarzenia bez logowania
+            </Link>
+          </div>
+          <div className="mt-2 text-center">
             <Link href="/org/logowanie" className="text-sm text-gray-500 hover:text-gray-700">
               Jesteś organizatorem? Zaloguj się do konta organizatora
             </Link>
