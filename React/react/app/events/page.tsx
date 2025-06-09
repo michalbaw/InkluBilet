@@ -43,13 +43,13 @@ export default function EventsPage() {
       try {
         const response = await fetch('http://localhost:5154/api/Organisations/GetAllEvents');
         if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          throw new Error('Nie udało się pobrać wydarzeń');
         }
         const data = await response.json();
         console.log('Events data:', data);
         setEvents(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching events');
+        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania wydarzeń');
       } finally {
         setIsLoading(false);
       }
@@ -76,12 +76,12 @@ export default function EventsPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to purchase ticket');
+        throw new Error('Nie udało się kupić biletu');
       }
 
       router.push('/tickets');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while purchasing ticket');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas kupowania bilteu');
     } finally {
       setBuyingTicket(null);
     }
@@ -95,15 +95,15 @@ export default function EventsPage() {
   const getFilterLabel = () => {
     switch (accessibilityFilter) {
       case 1:
-        return 'Person Reading';
+        return 'Lektor';
       case 2:
-        return 'Captions';
+        return 'Napisy';
       default:
-        return 'All Events';
+        return 'Wszystkie wydarzenia';
     }
   };
 
-  const filteredEvents = events.filter(event => 
+  const filteredEvents = events.filter(event =>
     accessibilityFilter === 'all' || event.accessibility === accessibilityFilter
   );
 
@@ -135,7 +135,7 @@ export default function EventsPage() {
           onClick={handleLogout}
           className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Login
+          Zaloguj
         </button>
       );
     }
@@ -145,13 +145,13 @@ export default function EventsPage() {
           href="/tickets"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200"
         >
-          My Tickets
+          Moje bilety
         </Link>
         <button
           onClick={handleLogout}
           className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Logout
+          Wyloguj
         </button>
       </div>
     );
@@ -161,7 +161,7 @@ export default function EventsPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Available Events</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Dostępne wydarzenia</h1>
           {getLoginOrLogoutMenu()}
         </div>
 
@@ -179,7 +179,7 @@ export default function EventsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            
+
             {isFilterOpen && (
               <div className="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
                 <div className="py-1" role="menu" aria-orientation="vertical">
@@ -195,7 +195,7 @@ export default function EventsPage() {
                     }`}
                     role="menuitem"
                   >
-                    All Events
+                    Wszystkie wydarzenia
                   </button>
                   <button
                     onClick={() => {
@@ -209,7 +209,7 @@ export default function EventsPage() {
                     }`}
                     role="menuitem"
                   >
-                    Events with Person Reading
+                    Wydarzenia z lektorem
                   </button>
                   <button
                     onClick={() => {
@@ -223,7 +223,7 @@ export default function EventsPage() {
                     }`}
                     role="menuitem"
                   >
-                    Events with Captions
+                    Wydarzenia z napisami
                   </button>
                 </div>
               </div>
@@ -250,7 +250,7 @@ export default function EventsPage() {
           <ul className="divide-y divide-gray-200">
             {filteredEvents.length === 0 ? (
               <li className="px-6 py-4">
-                <p className="text-gray-500 text-center">No events found with the selected accessibility option.</p>
+                <p className="text-gray-500 text-center">Nie znaleziono wydarzeń z wybranym udogodnieniem.</p>
               </li>
             ) : (
               filteredEvents.map((event) => (
@@ -259,7 +259,7 @@ export default function EventsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-medium text-gray-900 truncate">{event.name}</h3>
-                        <p className="text-sm text-gray-500">Organised by: {event.organisedBy}</p>
+                        <p className="text-sm text-gray-500">Organizowane przez: {event.organisedBy}</p>
                       </div>
                       <p className="mt-2 text-gray-600 whitespace-pre-wrap">{event.description}</p>
                       <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -273,7 +273,7 @@ export default function EventsPage() {
                           <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          {event.accessibility === 1 ? 'Person Reading Available' : 'Captions Available'}
+                          {event.accessibility === 1 ? 'Dostępny lektor' : 'Dostępne napisy'}
                         </div>
                       )}
                     </div>
@@ -289,7 +289,7 @@ export default function EventsPage() {
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
                         ) : null}
-                        {buyingTicket === event.id ? 'Buying...' : 'Buy Ticket'}
+                        {buyingTicket === event.id ? 'Kupowanie...' : 'Kup bilet'}
                       </button>
                     </div>
                   </div>
@@ -301,4 +301,4 @@ export default function EventsPage() {
       </div>
     </div>
   );
-} 
+}
