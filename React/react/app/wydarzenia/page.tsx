@@ -1,5 +1,6 @@
 'use client';
 
+import { getAccessibilityName, getCityName } from '../pomocnicze/tlumaczenieNazw';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,6 +13,7 @@ interface Event {
   organisedBy: string;
   location: string;
   accessibility: 0 | 1 | 2; // 0 = None, 1 = PersonReading, 2 = Captions
+  city: number
 }
 
 export default function EventsPage() {
@@ -19,9 +21,12 @@ export default function EventsPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [buyingTicket, setBuyingTicket] = useState<string | null>(null);
-  const [accessibilityFilter, setAccessibilityFilter] = useState<number | 'all'>('all');
+  const [accessibilityFilter, setAccessibilityFilter] = useState<number>(0);
+  const [cityFilter, setCityFilter] = useState<number>(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isCityFilterOpen, setIsCityFilterOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const cityDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Close dropdown when clicking outside
@@ -93,18 +98,16 @@ export default function EventsPage() {
   };
 
   const getFilterLabel = () => {
-    switch (accessibilityFilter) {
-      case 1:
-        return 'Lektor';
-      case 2:
-        return 'Napisy';
-      default:
-        return 'Wszystkie rodzaje udogodnień';
-    }
+    return getAccessibilityName(accessibilityFilter);
+  };
+
+  const getCityLabel = () => {
+    return getCityName(cityFilter);
   };
 
   const filteredEvents = events.filter(event =>
-    accessibilityFilter === 'all' || event.accessibility === accessibilityFilter
+    (accessibilityFilter === 0 || event.accessibility === accessibilityFilter) &&
+    (cityFilter === 0 || event.city === 0 || event.city === cityFilter)
   );
 
   if (isLoading) {
@@ -161,11 +164,11 @@ export default function EventsPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dostępne wydarzenia</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Wydarzenia</h1>
           {getLoginOrLogoutMenu()}
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 flex space-x-4">
           <div className="relative inline-block" ref={dropdownRef}>
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -185,11 +188,11 @@ export default function EventsPage() {
                 <div className="py-1" role="menu" aria-orientation="vertical">
                   <button
                     onClick={() => {
-                      setAccessibilityFilter('all');
+                      setAccessibilityFilter(0);
                       setIsFilterOpen(false);
                     }}
                     className={`w-full text-left px-4 py-2 text-sm ${
-                      accessibilityFilter === 'all'
+                      accessibilityFilter === 0
                         ? 'bg-gray-100 text-gray-900'
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
@@ -224,6 +227,84 @@ export default function EventsPage() {
                     role="menuitem"
                   >
                     Wydarzenia z napisami
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        
+          <div className="relative inline-block" ref={cityDropdownRef}>
+            <button
+              onClick={() => setIsCityFilterOpen(!isCityFilterOpen)}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <svg className="mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              {getCityLabel()}
+              <svg className="ml-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {isCityFilterOpen && (
+              <div className="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 z-10">
+                <div className="py-1" role="menu" aria-orientation="vertical">
+                  <button
+                    onClick={() => {
+                      setCityFilter(0);
+                      setIsCityFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm ${
+                      cityFilter === 0
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    role="menuitem"
+                  >
+                    Wszystkie miasta
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCityFilter(1);
+                      setIsCityFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm ${
+                      cityFilter === 1
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    role="menuitem"
+                  >
+                    Kraków
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCityFilter(2);
+                      setIsCityFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm ${
+                      cityFilter === 2
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    role="menuitem"
+                  >
+                    Warszawa
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCityFilter(3);
+                      setIsCityFilterOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm ${
+                      cityFilter === 3
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    role="menuitem"
+                  >
+                    Trójmiasto
                   </button>
                 </div>
               </div>
@@ -267,6 +348,12 @@ export default function EventsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         {formatEventTime(event.time)}
+                      </div>
+                      <div className="mt-2 flex items-center text-sm text-gray-500">
+                        <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        {getCityName(event.city)}
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500">
                         <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" stroke="none" viewBox="0 0 24 24">

@@ -15,6 +15,7 @@ export default function NewEventPage() {
   const [timeOfDay, setTimeOfDay] = useState('');
   const [location, setLocation] = useState('');
   const [accessibility, setAccessibility] = useState<0 | 1 | 2>(0);
+  const [city, setCity] = useState<number>(0);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function NewEventPage() {
           time: combinedTime,
           location,
           accessibility,
+          city,
         }),
       });
 
@@ -166,6 +168,24 @@ export default function NewEventPage() {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
                   placeholder="Miejsce wydarzenia"
                 />
+              </div>
+
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                  Miasto
+                </label>
+                <select
+                  id="city"
+                  value={city}
+                  onChange={(e) => setCity(Number(e.target.value) as 0 | 1 | 2 | 3)}
+                  required
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
+                >
+                  <option value="0">Niesprecyzowane</option>
+                  <option value="1">Kraków</option>
+                  <option value="2">Warszawa</option>
+                  <option value="3">Trójmiasto</option>
+                </select>
               </div>
 
               <div>

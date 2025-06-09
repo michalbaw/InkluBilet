@@ -1,5 +1,6 @@
 'use client';
 
+import { getCityName } from '@/app/pomocnicze/tlumaczenieNazw';
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -11,6 +12,7 @@ interface Event {
   time: string;
   location: string;
   accessibility: 0 | 1 | 2; // 0 = None, 1 = PersonReading, 2 = Captions
+  city: number
 }
 
 // Helper functions for date/time handling
@@ -44,6 +46,7 @@ export default function EventDetailPage() {
   const [timeOfDay, setTimeOfDay] = useState('');
   const [location, setLocation] = useState('');
   const [accessibility, setAccessibility] = useState<0 | 1 | 2>(0);
+  const [city, setCity] = useState<number>(0);
 
   useEffect(() => {
     const orgId = localStorage.getItem('orgId');
@@ -73,6 +76,7 @@ export default function EventDetailPage() {
         setTimeOfDay(formatTimeForInput(currentEvent.time));
         setLocation(currentEvent.location);
         setAccessibility(currentEvent.accessibility);
+        setCity(currentEvent.city);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania wydarzenia');
       } finally {
@@ -107,6 +111,7 @@ export default function EventDetailPage() {
             time: combinedTime,
             location,
             accessibility,
+            city,
           },
         }),
       });
@@ -123,6 +128,7 @@ export default function EventDetailPage() {
         time: combinedTime,
         location,
         accessibility,
+        city,
       });
       setIsEditing(false);
     } catch (err) {
@@ -261,6 +267,24 @@ export default function EventDetailPage() {
               </div>
 
               <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                  Miasto
+                </label>
+                <select
+                  id="city"
+                  value={city}
+                  onChange={(e) => setCity(Number(e.target.value) as number)}
+                  required
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
+                >
+                  <option value="0">Niesprecyzowane</option>
+                  <option value="1">Kraków</option>
+                  <option value="2">Warszawa</option>
+                  <option value="3">Trójmiasto</option>
+                </select>
+              </div>
+
+              <div>
                 <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700">
                   Oferowane udogodnienia
                 </label>
@@ -309,6 +333,10 @@ export default function EventDetailPage() {
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Miejsce</h4>
                   <p className="mt-1 text-sm text-gray-900">{event.location}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Miasto</h4>
+                  <p className="mt-1 text-sm text-gray-900">{getCityName(event.city)}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Oferowane udogodnienia</h4>

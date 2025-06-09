@@ -1,5 +1,6 @@
 'use client';
 
+import { getCityName } from '@/app/pomocnicze/tlumaczenieNazw';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -10,6 +11,8 @@ interface Event {
   description: string;
   time: string;
   location: string;
+  accessibility: 0 | 1 | 2;
+  city: number
 }
 
 export default function OrgDashboard() {
@@ -126,7 +129,7 @@ export default function OrgDashboard() {
                       <div className="flex items-center justify-between">
                       <div className="mt-2">
                         <p className="text-sm text-gray-500 truncate">
-                          {event.location}
+                          {event.location}, {getCityName(event.city)}
                         </p>
                         <p className="mt-1 text-sm text-gray-500 line-clamp-2">
                           {event.description}

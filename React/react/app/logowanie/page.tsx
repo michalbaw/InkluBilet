@@ -27,9 +27,7 @@ export default function LoginPage() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Nie znaleziono użytkownika');
-        } else if (response.status === 403) {
-          throw new Error('Niepoprawne hasło');
+          throw new Error('Niepoprawny login lub hasło.');
         } else {
           throw new Error('Logowanie niepowiodło się');
         }

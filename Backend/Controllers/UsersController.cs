@@ -34,13 +34,9 @@ public class UsersController(AppDbContext db) : ControllerBase
     public async Task<IActionResult> Login(String name, [FromBody] String password)
     {
         var u = await db.Users.Where(u => u.Name == name).Select(u => new { u.Id, u.Password }).FirstOrDefaultAsync();
-        if (u == null)
+        if (u == null || u.Password != password)
         {
             return NotFound();
-        }
-        if (u.Password != password)
-        {
-            return Forbid();
         }
         return Ok(u.Id);
     }
@@ -79,6 +75,7 @@ public class UsersController(AppDbContext db) : ControllerBase
                     t.Event.Location,
                     t.Event.Description,
                     t.Event.Accessibility,
+                    t.Event.City,
                 },
                 Organiser = t.Event.Organisation.Name,
             }).ToListAsync();
@@ -100,6 +97,7 @@ public class UsersController(AppDbContext db) : ControllerBase
                     t.Event.Location,
                     t.Event.Description,
                     t.Event.Accessibility,
+                    t.Event.City,
                 },
                 Organiser = t.Event.Organisation.Name,
             })

@@ -34,13 +34,9 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
     public async Task<IActionResult> Login(String login, [FromBody] String password)
     {
         var org = await db.Organisations.Where(o => o.Login == login).Select(o => new { o.Id, o.Password }).FirstOrDefaultAsync();
-        if (org == null)
+        if (org == null || org.Password != password)
         {
             return NotFound();
-        }
-        if (org.Password != password)
-        {
-            return Forbid();
         }
         return Ok(org.Id);
     }
@@ -63,6 +59,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         public DateTime Time { get; set; }
         public String Location { get; set; }
         public EventAccessibility Accessibility { get; set; }
+        public City City { get; set; }
     }
 
     [HttpPost("AddEvent/{id}")]
@@ -80,7 +77,8 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             Description = e.Description,
             Time = e.Time,
             Location = e.Location,
-            Accessibility = e.Accessibility
+            Accessibility = e.Accessibility,
+            City = e.City,
         };
         var y = await db.Events.AddAsync(x);
         await db.SaveChangesAsync();
@@ -98,7 +96,8 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             e.Time,
             OrganisedBy = e.Organisation.Name,
             e.Location,
-            e.Accessibility
+            e.Accessibility,
+            e.City,
         }).OrderBy(e => e.Time).ToListAsync();
 
         return Ok(x);
@@ -114,7 +113,8 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             e.Description,
             e.Time,
             e.Location,
-            e.Accessibility
+            e.Accessibility,
+            e.City,
         }).ToListAsync();
         return Ok(x);
     }
@@ -152,6 +152,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         e.Time = newEvent.NewEvent.Time;
         e.Location = newEvent.NewEvent.Location;
         e.Accessibility = newEvent.NewEvent.Accessibility;
+        e.City = newEvent.NewEvent.City;
         await db.SaveChangesAsync();
         return Ok();
     }

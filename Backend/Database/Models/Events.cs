@@ -10,6 +10,14 @@ public enum EventAccessibility
     Captions,
 }
 
+public enum City
+{
+    All,
+    Cracow,
+    Warsaw,
+    Tricity,
+}
+
 public class Event
 {
     [Key]
@@ -34,6 +42,9 @@ public class Event
 
     [Required]
     public EventAccessibility Accessibility { get; set; } = EventAccessibility.None;
+    
+    [Required]
+    public City City { get; set; } = City.All;
 
     public ICollection<Ticket> Tickets { get; } = [];
 }
