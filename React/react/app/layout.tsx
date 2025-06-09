@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from 'next/link';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          <img className="m-6" src="/logo.svg"/>
+          <Link href="/" className="inline-block"><img className="m-6" src="/logo.svg" alt="Przejdź na stronę główną"/></Link>
         {children}
       </body>
     </html>
