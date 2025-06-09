@@ -268,6 +268,12 @@ export default function EventsPage() {
                         </svg>
                         {formatEventTime(event.time)}
                       </div>
+                      <div className="mt-2 flex items-center text-sm text-gray-500">
+                        <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="currentColor" stroke="none" viewBox="0 0 24 24">
+                          <path strokeWidth="0.025" d="m 12,16.475 q 2.475,-2 3.7375,-3.85 Q 17,10.775 17,9.15 17,6.9 15.6,5.45 14.2,4 12,4 9.8,4 8.4,5.45 7,6.9 7,9.15 7,10.775 8.2625,12.625 9.525,14.475 12,16.475 Z M 12,19 Q 8.475,16.4 6.7375,13.95 5,11.5 5,9.15 5,6.025 6.95,4.0125 8.9,2 12,2 15.1,2 17.05,4.0125 19,6.025 19,9.15 19,11.5 17.2625,13.95 15.525,16.4 12,19 Z m 0,-8 q 0.825,0 1.4125,-0.5875 Q 14,9.825 14,9 14,8.175 13.4125,7.5875 12.825,7 12,7 11.175,7 10.5875,7.5875 10,8.175 10,9 10,9.825 10.5875,10.4125 11.175,11 12,11 Z M 5,22 v -2 h 14 v 2 z M 12,9 Z"/>
+                        </svg>
+                        {event.location}
+                      </div>
                       {typeof event.accessibility === 'number' && event.accessibility !== 0 && event.accessibility === 1 ? (
                         <div className="mt-2 flex items-center text-sm text-indigo-600">
                           <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
