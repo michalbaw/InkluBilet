@@ -29,25 +29,25 @@ export default function TicketDetailsPage() {
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
-      router.push('/login');
+      router.push('/logowanie');
       return;
     }
 
     const fetchTicket = async () => {
       try {
         const response = await fetch(`http://localhost:5154/api/Users/GetTicket/${params.id}`);
-        
+
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('Ticket not found');
+            throw new Error('Nie znaleziono biletu');
           }
-          throw new Error('Failed to fetch ticket details');
+          throw new Error('Nie udało się pobrać szczegółów biletu');
         }
 
         const data = await response.json();
         setTicket(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching ticket details');
+        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania szczegółów biletu');
       } finally {
         setIsLoading(false);
       }
@@ -72,16 +72,16 @@ export default function TicketDetailsPage() {
         <div className="max-w-3xl mx-auto">
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Error</h3>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Błąd</h3>
               <div className="mt-2 max-w-xl text-sm text-gray-500">
-                <p>{error || 'Failed to load ticket'}</p>
+                <p>{error || 'Nie udało się załadować biletu'}</p>
               </div>
               <div className="mt-5">
                 <Link
-                  href="/tickets"
+                  href="/bilety"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Back to tickets
+                  Wróć do biletów
                 </Link>
               </div>
             </div>
@@ -96,56 +96,56 @@ export default function TicketDetailsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <Link
-            href="/tickets"
+            href="/bilety"
             className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Back to tickets
+            Wróć do biletów
           </Link>
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h3 className="text-2xl leading-6 font-bold text-gray-900">
-              Ticket Details
+              Szczegóły biletu
             </h3>
           </div>
           <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Event Name</dt>
+                <dt className="text-sm font-medium text-gray-500">Nazwa wydarzenia</dt>
                 <dd className="mt-1 text-lg text-gray-900">{ticket.event.name}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Description</dt>
+                <dt className="text-sm font-medium text-gray-500">Opis</dt>
                 <dd className="mt-1 text-gray-900 whitespace-pre-wrap">{ticket.event.description}</dd>
               </div>
               <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500">Date</dt>
+                <dt className="text-sm font-medium text-gray-500">Data</dt>
                 <dd className="mt-1 text-gray-900">{new Date(ticket.event.time).toLocaleDateString()}</dd>
               </div>
               <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500">Time</dt>
+                <dt className="text-sm font-medium text-gray-500">Godzina</dt>
                 <dd className="mt-1 text-gray-900">{new Date(ticket.event.time).toLocaleTimeString()}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Location</dt>
+                <dt className="text-sm font-medium text-gray-500">Miejsce</dt>
                 <dd className="mt-1 text-gray-900">{ticket.event.location}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Ticket ID</dt>
+                <dt className="text-sm font-medium text-gray-500">Identyfikator biletu</dt>
                 <dd className="mt-1 font-mono text-gray-900">{ticket.id}</dd>
               </div>
               {ticket.event.accessibility !== 0 && (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-500">Accessibility</h4>
+                  <h4 className="text-sm font-medium text-gray-500">Udogodnienia</h4>
                   <div className="mt-1 flex items-center text-sm text-indigo-600">
                     <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    {ticket.event.accessibility === 1 ? 'Person Reading Available' : 'Captions Available'}
+                    {ticket.event.accessibility === 1 ? 'Dostępny lektor' : 'Dostępne napisy'}
                   </div>
                 </div>
               )}
@@ -155,13 +155,13 @@ export default function TicketDetailsPage() {
 
         <div className="mt-6">
           <Link
-            href="/tickets"
+            href="/bilety"
             className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Back to Tickets
+            Wróć do biletów
           </Link>
         </div>
       </div>
     </div>
   );
-} 
+}

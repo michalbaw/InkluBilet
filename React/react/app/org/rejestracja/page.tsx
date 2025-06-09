@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function OrgLoginPage() {
+export default function OrgRegisterPage() {
+  const [name, setName] = useState('');
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,33 +18,29 @@ export default function OrgLoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5154/api/Organisations/Login/${login}`, {
+      const response = await fetch('http://localhost:5154/api/Organisations/AddOrganisation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: `"${password}"`,
+        body: JSON.stringify({
+          name,
+          login,
+          password
+        }),
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Organization not found');
-        } else if (response.status === 403) {
-          throw new Error('Invalid password');
-        } else {
-          throw new Error('Login failed');
+        if (response.status === 409) {
+          throw new Error('Organizacja o tej nazwie już istnieje');
         }
+        throw new Error('Rejestracja niepowiodła się');
       }
 
-      const data = await response.json();
-      
-      // Store the organization ID in localStorage
-      localStorage.setItem('orgId', data);
-      
-      // Redirect to organization dashboard
-      router.push('/org/dashboard');
+      // Redirect to login page on success
+      router.push('/org/logowanie');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');
     } finally {
       setIsLoading(false);
     }
@@ -54,49 +51,63 @@ export default function OrgLoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to organization account
+            Zarejestruj nową organizację
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/org/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              register a new organization
+            lub{' '}
+            <Link href="/org/logowanie" className="font-medium text-indigo-600 hover:text-indigo-500">
+              zaloguj się do istniejącego konta organizacji
             </Link>
           </p>
           <div className="mt-2 text-center">
-            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">
-              Want to buy tickets? Sign in as user instead
+            <Link href="/rejestracja" className="text-sm text-gray-500 hover:text-gray-700">
+              Chcesz kupić bilety? Zarejestruj się jako użytkownik
             </Link>
           </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
+              <label htmlFor="name" className="sr-only">
+                Nazwa organizacji
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Nazwa organizacji"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
               <label htmlFor="login" className="sr-only">
-                Login
+                Nazwa konta
               </label>
               <input
                 id="login"
                 name="login"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Login"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Nazwa konta (wykorzystywana do logowania)"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Hasło
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Hasło"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -123,7 +134,7 @@ export default function OrgLoginPage() {
                   </svg>
                 </span>
               ) : (
-                'Sign in'
+                'Zarejestruj organizację'
               )}
             </button>
           </div>
@@ -131,4 +142,4 @@ export default function OrgLoginPage() {
       </div>
     </div>
   );
-} 
+}

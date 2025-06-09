@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function OrgLoginPage() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5154/api/Users/Login/${login}`, {
+      const response = await fetch(`http://localhost:5154/api/Organisations/Login/${login}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,23 +27,23 @@ export default function LoginPage() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('User not found');
+          throw new Error('Nie znaleziono organizacji');
         } else if (response.status === 403) {
-          throw new Error('Invalid password');
+          throw new Error('Niepoprawne hasło');
         } else {
-          throw new Error('Login failed');
+          throw new Error('Logowanie niepowiodło się');
         }
       }
 
       const data = await response.json();
-      
-      // Store the user ID in localStorage
-      localStorage.setItem('userId', data);
-      
-      // Redirect to events page
-      router.push('/events');
+
+      // Store the organization ID in localStorage
+      localStorage.setItem('orgId', data);
+
+      // Redirect to organization dashboard
+      router.push('/org/panel-zarzadzania');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
     } finally {
       setIsLoading(false);
     }
@@ -54,17 +54,17 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Zaloguj się do konta organizatora
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              create a new account
+            lub{' '}
+            <Link href="/org/rejestracja" className="font-medium text-indigo-600 hover:text-indigo-500">
+              zarejestruj nową organizację
             </Link>
           </p>
           <div className="mt-2 text-center">
-            <Link href="/org/login" className="text-sm text-gray-500 hover:text-gray-700">
-              Are you an event organizer? Sign in to organization account
+            <Link href="/logowanie" className="text-sm text-gray-500 hover:text-gray-700">
+              Chcesz kupić bilety? Zaloguj się jako użytkownik
             </Link>
           </div>
         </div>
@@ -72,23 +72,22 @@ export default function LoginPage() {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="login" className="sr-only">
-                Login
+                Nazwa konta
               </label>
               <input
                 id="login"
                 name="login"
                 type="text"
-                autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Login"
+                placeholder="Nazwa konta"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Hasło
               </label>
               <input
                 id="password"
@@ -97,7 +96,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Hasło"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -124,7 +123,7 @@ export default function LoginPage() {
                   </svg>
                 </span>
               ) : (
-                'Sign in'
+                'Zaloguj się'
               )}
             </button>
           </div>
@@ -132,4 +131,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}

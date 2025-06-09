@@ -21,7 +21,7 @@ export default function OrgDashboard() {
   useEffect(() => {
     const orgId = localStorage.getItem('orgId');
     if (!orgId) {
-      router.push('/org/login');
+      router.push('/org/logowanie');
       return;
     }
 
@@ -29,12 +29,12 @@ export default function OrgDashboard() {
       try {
         const response = await fetch(`http://localhost:5154/api/Organisations/GetOrgEvents/${orgId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch events');
+          throw new Error('Nie udało się pobrać wydarzeń');
         }
         const data = await response.json();
         setEvents(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching events');
+        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania wydarzeń');
       } finally {
         setIsLoading(false);
       }
@@ -44,12 +44,24 @@ export default function OrgDashboard() {
   }, [router]);
 
   const handleAddEvent = () => {
-    router.push('/org/events/new');
+    router.push('/org/wydarzenia/nowe');
   };
 
   const handleLogout = () => {
     localStorage.removeItem('orgId');
-    router.push('/org/login');
+    router.push('/org/logowanie');
+  };
+
+  const formatEventTime = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
   };
 
   if (isLoading) {
@@ -64,19 +76,19 @@ export default function OrgDashboard() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Your Events</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Twoje wydarzenia</h1>
           <div className="flex items-center space-x-4">
             <button
               onClick={handleLogout}
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Logout
+              Wyloguj
             </button>
             <button
               onClick={handleAddEvent}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Add New Event
+              Dodaj nowe wydarzenie
             </button>
           </div>
         </div>
@@ -91,35 +103,46 @@ export default function OrgDashboard() {
           <ul className="divide-y divide-gray-200">
             {events.length === 0 ? (
               <li className="px-6 py-4 text-center text-gray-500">
-                No events found. Create your first event!
+                Nie znaleziono wydarzeń.{' '}
+                <Link href="/org/wydarzenia/nowe" className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Stwórz swoje pierwsze wydarzenie!
+                </Link>
               </li>
             ) : (
               events.map((event) => (
                 <li key={event.id} className="hover:bg-gray-50">
-                  <Link href={`/org/events/${event.id}`}>
-                    <div className="px-6 py-4 flex items-center cursor-pointer">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <p className="text-lg font-medium text-indigo-600 truncate">
-                            {event.name}
-                          </p>
-                          <div className="ml-2 flex-shrink-0 flex">
-                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              {event.time}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-2">
-                          <p className="text-sm text-gray-500 truncate">
-                            {event.location}
-                          </p>
-                          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-                            {event.description}
+                  <div className="px-6 py-4 flex items-center">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="text-lg font-medium text-indigo-600 truncate">
+                          {event.name}
+                        </p>
+                        <div className="ml-2 flex-shrink-0 flex">
+                          <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {formatEventTime(event.time)}
                           </p>
                         </div>
                       </div>
+                      <div className="flex items-center justify-between">
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500 truncate">
+                          {event.location}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                          {event.description}
+                        </p>
+                      </div>
+                        <div className="ml-6">
+                            <Link
+                              href={`/org/wydarzenia/${event.id}`}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                              Zobacz szczegóły
+                            </Link>
+                          </div>
+                      </div>
                     </div>
-                  </Link>
+                  </div>
                 </li>
               ))
             )}
@@ -128,4 +151,4 @@ export default function OrgDashboard() {
       </div>
     </div>
   );
-} 
+}

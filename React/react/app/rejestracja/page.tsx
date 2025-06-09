@@ -29,15 +29,15 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         if (response.status === 409) {
-          throw new Error('User with this login already exists');
+          throw new Error('Użytkownik o takiej nazwie już istnieje');
         }
-        throw new Error('Registration failed');
+        throw new Error('Rejestracja niepowiodła się');
       }
 
       // Redirect to login page on success
-      router.push('/login');
+      router.push('/logowanie');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during registration');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas rejestracji');
     } finally {
       setIsLoading(false);
     }
@@ -48,12 +48,12 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create new account
+            Stwórz nowe konto
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              sign in to existing account
+            lub{' '}
+            <a href="/logowanie" className="font-medium text-indigo-600 hover:text-indigo-500">
+              zaloguj się do istniejącego konta
             </a>
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function RegisterPage() {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="login" className="sr-only">
-                Login
+                Nazwa użytkownika
               </label>
               <input
                 id="login"
@@ -69,14 +69,14 @@ export default function RegisterPage() {
                 type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Login"
+                placeholder="Nazwa użytkownika"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Hasło
               </label>
               <input
                 id="password"
@@ -84,7 +84,7 @@ export default function RegisterPage() {
                 type="password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Hasło"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                   </svg>
                 </span>
               ) : (
-                'Create account'
+                'Załóż konto'
               )}
             </button>
           </div>
@@ -119,4 +119,4 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-} 
+}

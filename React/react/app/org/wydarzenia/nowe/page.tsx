@@ -27,7 +27,7 @@ export default function NewEventPage() {
     try {
       const orgId = localStorage.getItem('orgId');
       if (!orgId) {
-        router.push('/org/login');
+        router.push('/org/logowanie');
         return;
       }
 
@@ -48,13 +48,13 @@ export default function NewEventPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create event');
+        throw new Error('Nie udało się stworzyć wydarzenia');
       }
 
       // Redirect back to dashboard on success
-      router.push('/org/dashboard');
+      router.push('/org/panel-zarzadzania');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while creating the event');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas tworzenia wydarzenia');
     } finally {
       setIsLoading(false);
     }
@@ -65,21 +65,21 @@ export default function NewEventPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center mb-8">
           <Link
-            href="/org/dashboard"
+            href="/org/panel-zarzadzania"
             className="text-indigo-600 hover:text-indigo-500 flex items-center"
           >
             <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
-            Back to dashboard
+            Wróć do panelu
           </Link>
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Create New Event</h3>
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Tworzenie nowego wydarzenia</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Fill in the details for your new event.
+              Uzupełnij szczegóły nowego wydarzenia.
             </p>
           </div>
 
@@ -95,7 +95,7 @@ export default function NewEventPage() {
             <div className="px-4 py-5 space-y-6 sm:px-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Event Name
+                  Nazwa wydarzenia
                 </label>
                 <input
                   type="text"
@@ -104,13 +104,13 @@ export default function NewEventPage() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Enter event name"
+                  placeholder="Nazwa wydarzenia"
                 />
               </div>
 
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Description
+                  Opis
                 </label>
                 <textarea
                   id="description"
@@ -119,14 +119,14 @@ export default function NewEventPage() {
                   required
                   rows={4}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Describe your event"
+                  placeholder="Szczegółowy opis wydarzenia"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                    Date
+                    Data
                   </label>
                   <input
                     type="date"
@@ -140,7 +140,7 @@ export default function NewEventPage() {
 
                 <div>
                   <label htmlFor="time" className="block text-sm font-medium text-gray-700">
-                    Time
+                    Godzina
                   </label>
                   <input
                     type="time"
@@ -155,7 +155,7 @@ export default function NewEventPage() {
 
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                  Location
+                  Miejsce
                 </label>
                 <input
                   type="text"
@@ -164,13 +164,13 @@ export default function NewEventPage() {
                   onChange={(e) => setLocation(e.target.value)}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Event location"
+                  placeholder="Miejsce wydarzenia"
                 />
               </div>
 
               <div>
                 <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700">
-                  Accessibility Options
+                  Oferowane udogodnienia
                 </label>
                 <select
                   id="accessibility"
@@ -179,9 +179,9 @@ export default function NewEventPage() {
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
                 >
-                  <option value="0">None</option>
-                  <option value="1">Person Reading</option>
-                  <option value="2">Captions</option>
+                  <option value="0">Brak</option>
+                  <option value="1">Lektor</option>
+                  <option value="2">Napisy</option>
                 </select>
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function NewEventPage() {
                 disabled={isLoading}
                 className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
               >
-                {isLoading ? 'Creating...' : 'Create Event'}
+                {isLoading ? 'Tworzenie...' : 'Stwórz wydarzenie'}
               </button>
             </div>
           </form>
@@ -200,4 +200,4 @@ export default function NewEventPage() {
       </div>
     </div>
   );
-} 
+}

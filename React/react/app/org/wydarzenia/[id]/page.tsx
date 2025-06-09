@@ -48,7 +48,7 @@ export default function EventDetailPage() {
   useEffect(() => {
     const orgId = localStorage.getItem('orgId');
     if (!orgId) {
-      router.push('/org/login');
+      router.push('/org/logowanie');
       return;
     }
 
@@ -56,13 +56,13 @@ export default function EventDetailPage() {
       try {
         const response = await fetch(`http://localhost:5154/api/Organisations/GetOrgEvents/${orgId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch event');
+          throw new Error('Nie udało się pobrać wydarzenia');
         }
         const events = await response.json();
         const currentEvent = events.find((e: Event) => e.id === params.id);
-        
+
         if (!currentEvent) {
-          throw new Error('Event not found');
+          throw new Error('Nie znaleziono wydarzenia');
         }
 
         setEvent(currentEvent);
@@ -74,7 +74,7 @@ export default function EventDetailPage() {
         setLocation(currentEvent.location);
         setAccessibility(currentEvent.accessibility);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching the event');
+        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania wydarzenia');
       } finally {
         setIsLoading(false);
       }
@@ -112,7 +112,7 @@ export default function EventDetailPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update event');
+        throw new Error('Nie udało się zaktualizować wydarzenia');
       }
 
       // Update local state
@@ -126,7 +126,7 @@ export default function EventDetailPage() {
       });
       setIsEditing(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while updating the event');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas aktualizacji wydarzenia');
     } finally {
       setIsSaving(false);
     }
@@ -144,9 +144,9 @@ export default function EventDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Event not found</h2>
-          <Link href="/org/dashboard" className="mt-4 text-indigo-600 hover:text-indigo-500">
-            Return to dashboard
+          <h2 className="text-2xl font-bold text-gray-900">Nie znaleziono wydarzenia</h2>
+          <Link href="/org/panel-zarzadzania" className="mt-4 text-indigo-600 hover:text-indigo-500">
+            Wróć do panelu
           </Link>
         </div>
       </div>
@@ -158,20 +158,20 @@ export default function EventDetailPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Link
-            href="/org/dashboard"
+            href="/org/panel-zarzadzania"
             className="text-indigo-600 hover:text-indigo-500 flex items-center"
           >
             <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
-            Back to dashboard
+            Wróć do panelu
           </Link>
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Edit Event
+              Edytuj wydarzenie
             </button>
           )}
         </div>
@@ -187,7 +187,7 @@ export default function EventDetailPage() {
             <form onSubmit={handleSave} className="p-6 space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Event Name
+                  Nazwa wydarzenia
                 </label>
                 <input
                   type="text"
@@ -196,13 +196,13 @@ export default function EventDetailPage() {
                   onChange={(e) => setName(e.target.value)}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Event name"
+                  placeholder="Nazwa wydarzenia"
                 />
               </div>
 
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Description
+                  Opis
                 </label>
                 <textarea
                   id="description"
@@ -211,14 +211,14 @@ export default function EventDetailPage() {
                   required
                   rows={4}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Event description"
+                  placeholder="Opis wydarzenia"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                    Date
+                    Data
                   </label>
                   <input
                     type="date"
@@ -232,7 +232,7 @@ export default function EventDetailPage() {
 
                 <div>
                   <label htmlFor="time" className="block text-sm font-medium text-gray-700">
-                    Time
+                    Godzina
                   </label>
                   <input
                     type="time"
@@ -247,7 +247,7 @@ export default function EventDetailPage() {
 
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                  Location
+                  Miejsce
                 </label>
                 <input
                   type="text"
@@ -256,13 +256,13 @@ export default function EventDetailPage() {
                   onChange={(e) => setLocation(e.target.value)}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
-                  placeholder="Event location"
+                  placeholder="Miejsce wydarzenia"
                 />
               </div>
 
               <div>
                 <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700">
-                  Accessibility Options
+                  Oferowane udogodnienia
                 </label>
                 <select
                   id="accessibility"
@@ -271,9 +271,9 @@ export default function EventDetailPage() {
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900"
                 >
-                  <option value="0">None</option>
-                  <option value="1">Person Reading</option>
-                  <option value="2">Captions</option>
+                  <option value="0">Brak</option>
+                  <option value="1">Lektor</option>
+                  <option value="2">Napisy</option>
                 </select>
               </div>
 
@@ -283,14 +283,14 @@ export default function EventDetailPage() {
                   onClick={() => setIsEditing(false)}
                   className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Cancel
+                  Anuluj
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                 >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                  {isSaving ? 'Zapisywanie...' : 'Zapisz zmiany'}
                 </button>
               </div>
             </form>
@@ -299,23 +299,23 @@ export default function EventDetailPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">{event.name}</h3>
               <div className="grid grid-cols-1 gap-6">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">Description</h4>
+                  <h4 className="text-sm font-medium text-gray-500">Opis</h4>
                   <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{event.description}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">Time</h4>
+                  <h4 className="text-sm font-medium text-gray-500">Data i godzina</h4>
                   <p className="mt-1 text-sm text-gray-900">{new Date(event.time).toLocaleString()}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">Location</h4>
+                  <h4 className="text-sm font-medium text-gray-500">Miejsce</h4>
                   <p className="mt-1 text-sm text-gray-900">{event.location}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">Accessibility</h4>
+                  <h4 className="text-sm font-medium text-gray-500">Oferowane udogodnienia</h4>
                   <p className="mt-1 text-sm text-gray-900">
-                    {event.accessibility === 0 ? 'No special accommodations' : 
-                     event.accessibility === 1 ? 'Person Reading Available' : 
-                     'Captions Available'}
+                    {event.accessibility === 0 ? 'Brak specjalnych udogodnień' :
+                     event.accessibility === 1 ? 'Lektor' :
+                     'Napisy'}
                   </p>
                 </div>
               </div>
@@ -325,4 +325,4 @@ export default function EventDetailPage() {
       </div>
     </div>
   );
-} 
+}

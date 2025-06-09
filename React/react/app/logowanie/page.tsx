@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function OrgRegisterPage() {
-  const [name, setName] = useState('');
+export default function LoginPage() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,29 +17,33 @@ export default function OrgRegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5154/api/Organisations/AddOrganisation', {
+      const response = await fetch(`http://localhost:5154/api/Users/Login/${login}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          login,
-          password
-        }),
+        body: `"${password}"`,
       });
 
       if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error('Organization with this name already exists');
+        if (response.status === 404) {
+          throw new Error('Nie znaleziono użytkownika');
+        } else if (response.status === 403) {
+          throw new Error('Niepoprawne hasło');
+        } else {
+          throw new Error('Logowanie niepowiodło się');
         }
-        throw new Error('Registration failed');
       }
 
-      // Redirect to login page on success
-      router.push('/org/login');
+      const data = await response.json();
+
+      // Store the user ID in localStorage
+      localStorage.setItem('userId', data);
+
+      // Redirect to events page
+      router.push('/wydarzenia');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during registration');
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas logowania');
     } finally {
       setIsLoading(false);
     }
@@ -51,63 +54,50 @@ export default function OrgRegisterPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Register new organization
+            Zaloguj się do swojego konta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/org/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              sign in to existing organization account
+            lub{' '}
+            <Link href="/rejestracja" className="font-medium text-indigo-600 hover:text-indigo-500">
+              stwórz nowe konto
             </Link>
           </p>
           <div className="mt-2 text-center">
-            <Link href="/register" className="text-sm text-gray-500 hover:text-gray-700">
-              Want to buy tickets? Register as user instead
+            <Link href="/org/logowanie" className="text-sm text-gray-500 hover:text-gray-700">
+              Jesteś organizatorem? Zaloguj się do konta organizatora
             </Link>
           </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Organization Display Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Organization Display Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div>
               <label htmlFor="login" className="sr-only">
-                Login
+                Nazwa użytkownika
               </label>
               <input
                 id="login"
                 name="login"
                 type="text"
+                autoComplete="username"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Login (used for signing in)"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Nazwa użytkownika"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Hasło
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Hasło"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -134,7 +124,7 @@ export default function OrgRegisterPage() {
                   </svg>
                 </span>
               ) : (
-                'Create organization'
+                'Zaloguj się'
               )}
             </button>
           </div>

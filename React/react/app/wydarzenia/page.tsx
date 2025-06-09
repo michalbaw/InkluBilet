@@ -61,7 +61,7 @@ export default function EventsPage() {
   const handleBuyTicket = async (eventId: string) => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
-      router.push('/login');
+      router.push('/logowanie');
       return;
     }
 
@@ -79,7 +79,7 @@ export default function EventsPage() {
         throw new Error('Nie udało się kupić biletu');
       }
 
-      router.push('/tickets');
+      router.push('/bilety');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas kupowania bilteu');
     } finally {
@@ -89,7 +89,7 @@ export default function EventsPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('userId');
-    router.push('/login');
+    router.push('/logowanie');
   };
 
   const getFilterLabel = () => {
@@ -99,7 +99,7 @@ export default function EventsPage() {
       case 2:
         return 'Napisy';
       default:
-        return 'Wszystkie wydarzenia';
+        return 'Wszystkie rodzaje udogodnień';
     }
   };
 
@@ -142,7 +142,7 @@ export default function EventsPage() {
 	return (
       <div className="flex items-center space-x-4">
         <Link
-          href="/tickets"
+          href="/bilety"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200"
         >
           Moje bilety
@@ -195,7 +195,7 @@ export default function EventsPage() {
                     }`}
                     role="menuitem"
                   >
-                    Wszystkie wydarzenia
+                    Wszystkie rodzaje udogodnień
                   </button>
                   <button
                     onClick={() => {
