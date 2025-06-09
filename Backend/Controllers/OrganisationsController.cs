@@ -60,7 +60,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
     {
         public String Name { get; set; }
         public String Description { get; set; }
-        public String Time { get; set; }
+        public DateTime Time { get; set; }
         public String Location { get; set; }
         public EventAccessibility Accessibility { get; set; }
     }
@@ -116,6 +116,16 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             e.Location,
             e.Accessibility
         }).ToListAsync();
+        return Ok(x);
+    }
+
+    [HttpGet("GetAvailableEventDates")]
+    public async Task<IActionResult> GetAvailableEventDates()
+    {
+        var x = await db.Events.Select(e => new
+        {
+            e.Time.Date
+        }).Distinct().ToListAsync();
         return Ok(x);
     }
 

@@ -30,7 +30,7 @@ public class Event
     public String Description { get; set; } = "";
 
     [Required]
-    public String Time { get; set; } = "";
+    public DateTime Time { get; set; } = DateTime.Now;
 
     [Required]
     public EventAccessibility Accessibility { get; set; } = EventAccessibility.None;

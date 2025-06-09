@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using InkluBilet.Database.Models;
 using InkluBilet.Database.Configurations;
+using System.Globalization;
 
 namespace InkluBilet.Database;
 
@@ -48,28 +49,28 @@ public class AppDbContext : DbContext
                 new () {
                     {"Name", "Romeo i Julia"},
                     {"Description", "'Romeo i Julia' w teatrze"},
-                    {"Time", "2025-06-20T19:00"},
+                    {"Time", "2025-06-20T19:00:00"},
                     {"Location", "Teatr Słowackiego"},
                     {"Accessibility", EventAccessibility.PersonReading}
                 },
                 new () {
                     {"Name", "Hamlet"},
                     {"Description", "'Hamlet' dla każdego"},
-                    {"Time", "2025-06-25T18:30"},
+                    {"Time", "2025-06-25T18:30:00"},
                     {"Location", "Teatr Bagatela"},
                     {"Accessibility", EventAccessibility.PersonReading}
                 },
                 new () {
                     {"Name", "Straszny dwór"},
                     {"Description", "Opera z napisami"},
-                    {"Time", "2025-06-20T20:00"},
+                    {"Time", "2025-06-20T20:00:00"},
                     {"Location", "Opera Krakowska"},
                     {"Accessibility", EventAccessibility.Captions}
                 },
                 new () {
                     {"Name", "Koncert rodzinny"},
                     {"Description", "Piknik rodzinny z koncertem"},
-                    {"Time", "2025-06-21T11:00"},
+                    {"Time", "2025-06-21T11:00:00"},
                     {"Location", "Błonia"},
                     {"Accessibility", EventAccessibility.Captions}
                 }
@@ -83,7 +84,7 @@ public class AppDbContext : DbContext
                             Organisation = testOrg,
                             Name = (string)testEvData["Name"],
                             Description = (string)testEvData["Description"],
-                            Time = (string)testEvData["Time"],
+                            Time = DateTime.ParseExact((string)testEvData["Time"], "s", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal).ToUniversalTime(),
                             Location = (string)testEvData["Location"],
                             Accessibility = (EventAccessibility)testEvData["Accessibility"],
                     });
