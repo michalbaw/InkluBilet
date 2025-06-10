@@ -34,11 +34,16 @@ export default function EventsPage() {
   const router = useRouter();
   const localizer = momentLocalizer(moment)
 
+  moment.locale('pl');
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsFilterOpen(false);
+      }
+      if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target as Node)) {
+        setIsCityFilterOpen(false);
       }
     }
 
@@ -176,7 +181,7 @@ export default function EventsPage() {
             </button>
 
             {isFilterOpen && (
-              <div className="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100">
+              <div className="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 z-10">
                 <div className="py-1" role="menu" aria-orientation="vertical">
                   <button
                     onClick={() => {
@@ -338,7 +343,7 @@ export default function EventsPage() {
                   date={date}
                   onNavigate={(date) => setDate(new Date(date))}
                   onSelectEvent={(event) => redirectToBuyTicket(event.id)}
-                  culture="pl"
+                  messages={{"next": "Następny miesiąc", "previous": "Poprzedni miesiąc", "today": "Dziś"}}
                 />
               </div>
             ) : (
