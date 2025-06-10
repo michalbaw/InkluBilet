@@ -15,16 +15,12 @@ interface Event {
   city: number
 }
 
-interface Ticket {
-  id: string;
-  event: Event;
-  organiser: string;
-}
-
-export default function TicketDetailsPage() {
-  const [ticket, setTicket] = useState<Ticket | null>(null);
+export default function EventDetailsPage() {
+  const [event, setEvent] = useState<Event | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [count, setCount] = useState<number>(1);
+  const [buyingTicket, setBuyingTicket] = useState(false);
   const router = useRouter();
   const params = useParams();
 
@@ -35,30 +31,59 @@ export default function TicketDetailsPage() {
       return;
     }
 
-    const fetchTicket = async () => {
+    const fetchEvent = async () => {
       try {
-        const response = await fetch(`http://localhost:5154/api/Users/GetTicket/${params.id}`);
+        const response = await fetch(`http://localhost:5154/api/Organisations/GetEvent/${params.id}`);
 
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('Nie znaleziono biletu');
+            throw new Error('Nie znaleziono wydarzenia');
           }
-          throw new Error('Nie udało się pobrać szczegółów biletu');
+          throw new Error('Nie udało się pobrać szczegółów wydarzenia');
         }
 
         const data = await response.json();
-        setTicket(data);
+        setEvent(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania szczegółów biletu');
+        setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania szczegółów wydarzenia');
       } finally {
         setIsLoading(false);
       }
     };
 
     if (params.id) {
-      fetchTicket();
+      fetchEvent();
     }
   }, [params.id, router]);
+
+  const handleBuyTicket = async (ticketCount: string) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      router.push('/logowanie');
+      return;
+    }
+
+    setBuyingTicket(true);
+    try {
+      const response = await fetch(`http://localhost:5154/api/Users/BuyTicket/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"EventId": params.id, "Count": ticketCount}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się kupić biletu');
+      }
+
+      router.push('/bilety');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas kupowania bilteu');
+    } finally {
+      setBuyingTicket(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -68,7 +93,7 @@ export default function TicketDetailsPage() {
     );
   }
 
-  if (error || !ticket) {
+  if (error || !event) {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
@@ -76,14 +101,14 @@ export default function TicketDetailsPage() {
             <div className="px-4 py-5 sm:p-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Błąd</h3>
               <div className="mt-2 max-w-xl text-sm text-gray-500">
-                <p>{error || 'Nie udało się załadować biletu'}</p>
+                <p>{error || 'Nie udało się załadować wydarzenia'}</p>
               </div>
               <div className="mt-5">
                 <Link
-                  href="/bilety"
+                  href="/wydarzenia"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Wróć do biletów
+                  Wróć do wydarzeń
                 </Link>
               </div>
             </div>
@@ -98,56 +123,74 @@ export default function TicketDetailsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <Link
-            href="/bilety"
+            href="/wydarzenia"
             className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Wróć do biletów
+            Wróć do wydarzeń
           </Link>
+        </div>
+
+        <h3 className="text-2xl leading-6 font-bold text-gray-900 px-4 py-5 sm:px-6">
+          Wybierz bilet
+        </h3>
+
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg px-4 py-5 sm:px-6 mb-5 flex justify-between items-center">
+          <h4 className="text-2xl leading-6 font-bold text-gray-900">
+            Normalny
+          </h4>
+
+          <input type="number" value={count} onChange={e => setCount(e.target.value)} min="1" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
+
+          <div className="ml-6">
+            <button
+              onClick={() => handleBuyTicket(count)}
+              disabled={buyingTicket}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {buyingTicket ? 'Za chwilę nastąpi przekierowanie do płatności...' : 'Potwierdź i zapłać'}
+            </button>
+          </div>
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
             <h3 className="text-2xl leading-6 font-bold text-gray-900">
-              Szczegóły biletu
+              Szczegóły wydarzenia
             </h3>
           </div>
           <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-500">Nazwa wydarzenia</dt>
-                <dd className="mt-1 text-lg text-gray-900">{ticket.event.name}</dd>
+                <dd className="mt-1 text-lg text-gray-900">{event.name}</dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-500">Opis</dt>
-                <dd className="mt-1 text-gray-900 whitespace-pre-wrap">{ticket.event.description}</dd>
+                <dd className="mt-1 text-gray-900 whitespace-pre-wrap">{event.description}</dd>
               </div>
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Data</dt>
-                <dd className="mt-1 text-gray-900">{new Date(ticket.event.time).toLocaleDateString()}</dd>
+                <dd className="mt-1 text-gray-900">{new Date(event.time).toLocaleDateString()}</dd>
               </div>
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Godzina</dt>
-                <dd className="mt-1 text-gray-900">{new Date(ticket.event.time).toLocaleTimeString()}</dd>
+                <dd className="mt-1 text-gray-900">{new Date(event.time).toLocaleTimeString()}</dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-500">Miejsce</dt>
-                <dd className="mt-1 text-gray-900">{ticket.event.location}</dd>
+                <dd className="mt-1 text-gray-900">{event.location}</dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-500">Miasto</dt>
-                <dd className="mt-1 text-gray-900">{getCityName(ticket.event.city)}</dd>
-                </div>
-              <div className="sm:col-span-2">
-                <dt className="text-sm font-medium text-gray-500">Identyfikator biletu</dt>
-                <dd className="mt-1 font-mono text-gray-900">{ticket.id}</dd>
+                <dd className="mt-1 text-gray-900">{getCityName(event.city)}</dd>
               </div>
-              {ticket.event.accessibility !== 0 && (
-                <div className="mt-4">
+              {event.accessibility !== 0 && (
+                <div className="mt-2">
                   <h4 className="text-sm font-medium text-gray-500">Udogodnienia</h4>
-                  {ticket.event.accessibility === 1 ? (
+                  {event.accessibility === 1 ? (
                     <div className="mt-1 flex items-center text-sm text-indigo-600">
                       <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />

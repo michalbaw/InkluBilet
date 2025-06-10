@@ -119,6 +119,29 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
         return Ok(x);
     }
 
+    [HttpGet("GetEvent/{id}")]
+    public async Task<IActionResult> GetEvent(Guid id)
+    {
+        var ev = await db.Events.Where(e => e.Id == id)
+            .Select(e => new
+            {
+                e.Id,
+                e.Name,
+                e.Description,
+                e.Time,
+                OrganisedBy = e.Organisation.Name,
+                e.Location,
+                e.Accessibility,
+                e.City,
+            })
+            .FirstOrDefaultAsync();
+        if (ev == default)
+        {
+            return NotFound();
+        }
+        return Ok(ev);
+    }
+
     [HttpGet("GetAvailableEventDates")]
     public async Task<IActionResult> GetAvailableEventDates()
     {

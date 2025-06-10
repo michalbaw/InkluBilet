@@ -148,9 +148,15 @@ export default function TicketsPage() {
                       </div>
                     {ticket.event.accessibility !== 0 && (
                       <div className="mt-2 flex items-center text-sm text-indigo-600">
-                        <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
+                        {ticket.event.accessibility === 1 ? (
+                          <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                        ) : (
+                          <svg className="flex-shrink-0 mr-1.5 h-5 w-5" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeWidth="0.025" d="M 5,20 Q 4.175,20 3.5875,19.4125 3,18.825 3,18 V 6 Q 3,5.175 3.5875,4.5875 4.175,4 5,4 H 19 Q 19.825,4 20.4125,4.5875 21,5.175 21,6 v 12 q 0,0.825 -0.5875,1.4125 Q 19.825,20 19,20 Z M 5,18 H 19 V 6 H 5 Z m 2,-3 h 3 q 0.425,0 0.7125,-0.2875 Q 11,14.425 11,14 V 13 H 9.5 v 0.5 h -2 v -3 h 2 V 11 H 11 V 10 Q 11,9.575 10.7125,9.2875 10.425,9 10,9 H 7 Q 6.575,9 6.2875,9.2875 6,9.575 6,10 v 4 Q 6,14.425 6.2875,14.7125 6.575,15 7,15 Z m 7,0 h 3 q 0.425,0 0.7125,-0.2875 Q 18,14.425 18,14 v -1 h -1.5 v 0.5 h -2 v -3 h 2 V 11 H 18 V 10 Q 18,9.575 17.7125,9.2875 17.425,9 17,9 H 14 Q 13.575,9 13.2875,9.2875 13,9.575 13,10 v 4 q 0,0.425 0.2875,0.7125 Q 13.575,15 14,15 Z M 5,18 V 6 Z"/>
+                          </svg>
+                        )}
                         {getAccessibilityName(ticket.event.accessibility)}
                       </div>
                     )}

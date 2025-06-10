@@ -41,10 +41,16 @@ public class UsersController(AppDbContext db) : ControllerBase
         return Ok(u.Id);
     }
 
-    [HttpPost("BuyTicket/{id}")]
-    public async Task<IActionResult> BuyTicket(Guid id, [FromBody] Guid eventId)
+    public struct TicketTemplate
     {
-        var e = await db.Events.Where(e => e.Id == eventId).Select(e => e.Id).FirstOrDefaultAsync();
+        public Guid EventId { get; set; }
+        public int Count { get; set; }
+    }
+
+    [HttpPost("BuyTicket/{id}")]
+    public async Task<IActionResult> BuyTicket(Guid id, [FromBody] TicketTemplate tt)
+    {
+        var e = await db.Events.Where(e => e.Id == tt.EventId).Select(e => e.Id).FirstOrDefaultAsync();
         if (e == default)
         {
             return NotFound("Event not found.");
@@ -54,8 +60,11 @@ public class UsersController(AppDbContext db) : ControllerBase
         {
             return NotFound("User not found.");
         }
-        Ticket ticket = new Ticket { EventId = e, UserId = u };
-        await db.Tickets.AddAsync(ticket);
+        for (int i = 0; i < tt.Count; i++)
+        {
+            Ticket ticket = new Ticket { EventId = e, UserId = u };
+            await db.Tickets.AddAsync(ticket);
+        }
         await db.SaveChangesAsync();
         return Ok();
     }
