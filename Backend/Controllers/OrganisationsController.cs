@@ -115,7 +115,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
             e.Location,
             e.Accessibility,
             e.City,
-        }).ToListAsync();
+        }).OrderBy(e => e.Time).ToListAsync();
         return Ok(x);
     }
 
@@ -133,6 +133,7 @@ public class OrganisationsController(AppDbContext db) : ControllerBase
                 e.Location,
                 e.Accessibility,
                 e.City,
+                TicketCount=e.Tickets.Select(t => t.Id).ToList().Count
             })
             .FirstOrDefaultAsync();
         if (ev == default)

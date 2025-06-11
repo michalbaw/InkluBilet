@@ -1,6 +1,6 @@
 'use client';
 
-import { getCityName } from '@/app/pomocnicze/tlumaczenieNazw';
+import { getCityName, getAccessibilityName } from '@/app/pomocnicze/tlumaczenieNazw';
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ interface Event {
   location: string;
   accessibility: 0 | 1 | 2; // 0 = None, 1 = PersonReading, 2 = Captions
   city: number
+  ticketCount: number
 }
 
 // Helper functions for date/time handling
@@ -47,6 +48,7 @@ export default function EventDetailPage() {
   const [location, setLocation] = useState('');
   const [accessibility, setAccessibility] = useState<0 | 1 | 2>(0);
   const [city, setCity] = useState<number>(0);
+  const [ticketCount, setTicketCount] = useState<number>(0);
 
   useEffect(() => {
     const orgId = localStorage.getItem('orgId');
@@ -57,12 +59,11 @@ export default function EventDetailPage() {
 
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`http://localhost:5154/api/Organisations/GetOrgEvents/${orgId}`);
+        const response = await fetch(`http://localhost:5154/api/Organisations/GetEvent/${params.id}`);
         if (!response.ok) {
           throw new Error('Nie udało się pobrać wydarzenia');
         }
-        const events = await response.json();
-        const currentEvent = events.find((e: Event) => e.id === params.id);
+        const currentEvent = await response.json();
 
         if (!currentEvent) {
           throw new Error('Nie znaleziono wydarzenia');
@@ -77,6 +78,7 @@ export default function EventDetailPage() {
         setLocation(currentEvent.location);
         setAccessibility(currentEvent.accessibility);
         setCity(currentEvent.city);
+        setTicketCount(currentEvent.ticketCount);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas pobierania wydarzenia');
       } finally {
@@ -129,6 +131,7 @@ export default function EventDetailPage() {
         location,
         accessibility,
         city,
+        ticketCount,
       });
       setIsEditing(false);
     } catch (err) {
@@ -341,10 +344,12 @@ export default function EventDetailPage() {
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Oferowane udogodnienia</h4>
                   <p className="mt-1 text-sm text-gray-900">
-                    {event.accessibility === 0 ? 'Brak specjalnych udogodnień' :
-                     event.accessibility === 1 ? 'Lektor' :
-                     'Napisy'}
+                    {getAccessibilityName(event.accessibility)}
                   </p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Liczba sprzedanych biletów</h4>
+                  <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{event.ticketCount}</p>
                 </div>
               </div>
             </div>
