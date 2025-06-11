@@ -19,6 +19,7 @@ interface Ticket {
   id: string;
   event: Event;
   organiser: string;
+  type: 0 | 1; // 0 = Normal, 1 = Discounted
 }
 
 export default function TicketsPage() {
@@ -161,13 +162,16 @@ export default function TicketsPage() {
                       </div>
                     )}
                   </div>
-                  <div className="ml-6">
-                    <Link
-                      href={`/bilety/${ticket.id}`}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Zobacz szczegóły
-                    </Link>
+                  <div>
+                    <h3 className="ml-6 mb-4 text-lg font-medium text-gray-900">{ticket.type === 0 ? 'Bilet normalny' : 'Bilet ulgowy'}</h3>
+                    <div className="ml-6">
+                      <Link
+                        href={`/bilety/${ticket.id}`}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        Zobacz szczegóły
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </li>

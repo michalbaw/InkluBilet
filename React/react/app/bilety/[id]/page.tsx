@@ -19,6 +19,7 @@ interface Ticket {
   id: string;
   event: Event;
   organiser: string;
+  type: 0 | 1; // 0 = Normal, 1 = Discounted
 }
 
 export default function TicketDetailsPage() {
@@ -132,20 +133,24 @@ export default function TicketDetailsPage() {
                 <dt className="text-sm font-medium text-gray-500">Godzina</dt>
                 <dd className="mt-1 text-gray-900">{new Date(ticket.event.time).toLocaleTimeString()}</dd>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Miejsce</dt>
                 <dd className="mt-1 text-gray-900">{ticket.event.location}</dd>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Miasto</dt>
                 <dd className="mt-1 text-gray-900">{getCityName(ticket.event.city)}</dd>
                 </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Identyfikator biletu</dt>
                 <dd className="mt-1 font-mono text-gray-900">{ticket.id}</dd>
               </div>
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-medium text-gray-500">Rodzaj biletu</dt>
+                <dd className="mt-1 text-gray-900">{ticket.type === 0 ? 'Normalny' : 'Ulgowy'}</dd>
+              </div>
               {ticket.event.accessibility !== 0 && (
-                <div className="mt-4">
+                <div className="sm:col-span-2">
                   <h4 className="text-sm font-medium text-gray-500">Udogodnienia</h4>
                   {ticket.event.accessibility === 1 ? (
                     <div className="mt-1 flex items-center text-sm text-indigo-600">

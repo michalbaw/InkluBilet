@@ -44,7 +44,8 @@ public class UsersController(AppDbContext db) : ControllerBase
     public struct TicketTemplate
     {
         public Guid EventId { get; set; }
-        public int Count { get; set; }
+        public int NormalTicketCount { get; set; }
+        public int DiscountTicketCount { get; set; }
     }
 
     [HttpPost("BuyTicket/{id}")]
@@ -60,9 +61,14 @@ public class UsersController(AppDbContext db) : ControllerBase
         {
             return NotFound("User not found.");
         }
-        for (int i = 0; i < tt.Count; i++)
+        for (int i = 0; i < tt.NormalTicketCount; i++)
         {
-            Ticket ticket = new Ticket { EventId = e, UserId = u };
+            Ticket ticket = new Ticket { EventId = e, UserId = u, Type = TicketType.Normal };
+            await db.Tickets.AddAsync(ticket);
+        }
+        for (int i = 0; i < tt.DiscountTicketCount; i++)
+        {
+            Ticket ticket = new Ticket { EventId = e, UserId = u, Type = TicketType.Discounted };
             await db.Tickets.AddAsync(ticket);
         }
         await db.SaveChangesAsync();
@@ -76,6 +82,7 @@ public class UsersController(AppDbContext db) : ControllerBase
             .Select(t => new
             {
                 t.Id,
+                t.Type,
                 Event = new
                 {
                     t.Event.Id,
@@ -98,6 +105,7 @@ public class UsersController(AppDbContext db) : ControllerBase
             .Select(t => new
             {
                 t.Id,
+                t.Type,
                 Event = new
                 {
                     t.Event.Id,

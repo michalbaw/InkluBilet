@@ -18,8 +18,10 @@ interface Event {
 export default function EventDetailsPage() {
   const [event, setEvent] = useState<Event | null>(null);
   const [error, setError] = useState('');
+  const [userError, setUserError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [count, setCount] = useState<number>(1);
+  const [normalTicketCount, setNormalTicketCount] = useState<number>(1);
+  const [discountTicketCount, setDiscountTicketCount] = useState<number>(0);
   const [buyingTicket, setBuyingTicket] = useState(false);
   const router = useRouter();
   const params = useParams();
@@ -56,10 +58,14 @@ export default function EventDetailsPage() {
     }
   }, [params.id, router]);
 
-  const handleBuyTicket = async (ticketCount: string) => {
+  const handleBuyTicket = async (normalTickets: number, discountTickets: number) => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       router.push('/logowanie');
+      return;
+    }
+    if (normalTickets + discountTickets == 0) {
+      setUserError("Proszę wybrać co najmniej jeden bilet");
       return;
     }
 
@@ -70,7 +76,7 @@ export default function EventDetailsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({"EventId": params.id, "Count": ticketCount}),
+        body: JSON.stringify({"EventId": params.id, "NormalTicketCount": normalTickets, "DiscountTicketCount": discountTickets}),
       });
 
       if (!response.ok) {
@@ -133,26 +139,51 @@ export default function EventDetailsPage() {
           </Link>
         </div>
 
-        <h3 className="text-2xl leading-6 font-bold text-gray-900 px-4 py-5 sm:px-6">
-          Wybierz bilet
-        </h3>
-
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg px-4 py-5 sm:px-6 mb-5 flex justify-between items-center">
-          <h4 className="text-2xl leading-6 font-bold text-gray-900">
-            Normalny
-          </h4>
-
-          <input type="number" value={count} onChange={e => setCount(e.target.value)} min="1" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
+        <div className="flex justify-between px-4 py-5 sm:px-6">
+          <h3 className="text-2xl leading-6 font-bold text-gray-900">
+            Wybierz bilet
+          </h3>
 
           <div className="ml-6">
             <button
-              onClick={() => handleBuyTicket(count)}
+              onClick={() => handleBuyTicket(normalTicketCount, discountTicketCount)}
               disabled={buyingTicket}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {buyingTicket ? 'Za chwilę nastąpi przekierowanie do płatności...' : 'Potwierdź i zapłać'}
             </button>
           </div>
+        </div>
+
+        {userError && (
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{userError}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg px-4 py-5 sm:px-6 mb-5 flex justify-between items-center">
+          <h4 className="text-2xl leading-6 font-bold text-gray-900">
+            Normalny
+          </h4>
+
+          <input type="number" value={normalTicketCount} onChange={e => {setNormalTicketCount(e.target.value); setUserError('')}} min="0" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
+        </div>
+
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg px-4 py-5 sm:px-6 mb-5 flex justify-between items-center">
+          <h4 className="text-2xl leading-6 font-bold text-gray-900">
+            Ulgowy
+          </h4>
+
+          <input type="number" value={discountTicketCount} onChange={e => {setDiscountTicketCount(e.target.value); setUserError('')}} min="0" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -179,11 +210,11 @@ export default function EventDetailsPage() {
                 <dt className="text-sm font-medium text-gray-500">Godzina</dt>
                 <dd className="mt-1 text-gray-900">{new Date(event.time).toLocaleTimeString()}</dd>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Miejsce</dt>
                 <dd className="mt-1 text-gray-900">{event.location}</dd>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Miasto</dt>
                 <dd className="mt-1 text-gray-900">{getCityName(event.city)}</dd>
               </div>
