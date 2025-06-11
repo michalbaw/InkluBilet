@@ -184,7 +184,7 @@ export default function EventDetailsPage() {
             }} 
             min="0" 
             max="100" 
-            className="border rounded-md px-4 py-2 border-indigo-500"
+            className="border rounded-md px-4 py-2 border-indigo-500 text-gray-900 font-medium"
           />
         </div>
 
@@ -202,7 +202,7 @@ export default function EventDetailsPage() {
             }} 
             min="0" 
             max="100" 
-            className="border rounded-md px-4 py-2 border-indigo-500"
+            className="border rounded-md px-4 py-2 border-indigo-500 text-gray-900 font-medium"
           />
         </div>
 

@@ -25,9 +25,16 @@ export default function EventsPage() {
   const [buyingTicket, setBuyingTicket] = useState<string | null>(null);
   const [accessibilityFilter, setAccessibilityFilter] = useState<number>(0);
   const [cityFilter, setCityFilter] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isCityFilterOpen, setIsCityFilterOpen] = useState(false);
-  const [isCalendarMode, setIsCalendarMode] = useState(false);
+  const [isCalendarMode, setIsCalendarMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedView = localStorage.getItem('eventViewMode');
+      return savedView === 'calendar';
+    }
+    return false;
+  });
   const [date, setDate] = useState(new Date());
   const dropdownRef = useRef<HTMLDivElement>(null);
   const cityDropdownRef = useRef<HTMLDivElement>(null);
@@ -98,7 +105,8 @@ export default function EventsPage() {
 
   const filteredEvents = events.filter(event =>
     (accessibilityFilter === 0 || event.accessibility === accessibilityFilter) &&
-    (cityFilter === 0 || event.city === 0 || event.city === cityFilter)
+    (cityFilter === 0 || event.city === 0 || event.city === cityFilter) &&
+    (searchQuery === '' || event.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   if (isLoading) {
@@ -157,7 +165,11 @@ export default function EventsPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Wydarzenia</h1>
           <button
-            onClick={() => setIsCalendarMode(!isCalendarMode)}
+            onClick={() => {
+              const newMode = !isCalendarMode;
+              setIsCalendarMode(newMode);
+              localStorage.setItem('eventViewMode', newMode ? 'calendar' : 'list');
+            }}
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             {isCalendarMode ? 'Widok listy' : 'Widok kalendarza'}
@@ -166,6 +178,23 @@ export default function EventsPage() {
         </div>
 
         <div className="mb-6 flex space-x-4">
+          <div className="relative flex-1 max-w-lg">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Szukaj wydarzenia..."
+                className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
           <div className="relative inline-block" ref={dropdownRef}>
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
