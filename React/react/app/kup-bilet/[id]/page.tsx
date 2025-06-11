@@ -175,7 +175,17 @@ export default function EventDetailsPage() {
             Normalny
           </h4>
 
-          <input type="number" value={normalTicketCount} onChange={e => {setNormalTicketCount(e.target.value); setUserError('')}} min="0" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
+          <input 
+            type="number" 
+            value={normalTicketCount} 
+            onChange={e => {
+              setNormalTicketCount(Number(e.target.value)); 
+              setUserError('');
+            }} 
+            min="0" 
+            max="100" 
+            className="border rounded-md px-4 py-2 border-indigo-500"
+          />
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg px-4 py-5 sm:px-6 mb-5 flex justify-between items-center">
@@ -183,7 +193,17 @@ export default function EventDetailsPage() {
             Ulgowy
           </h4>
 
-          <input type="number" value={discountTicketCount} onChange={e => {setDiscountTicketCount(e.target.value); setUserError('')}} min="0" max="100" className="border rounded-md px-4 py-2 border-indigo-500"/>
+          <input 
+            type="number" 
+            value={discountTicketCount} 
+            onChange={e => {
+              setDiscountTicketCount(Number(e.target.value)); 
+              setUserError('');
+            }} 
+            min="0" 
+            max="100" 
+            className="border rounded-md px-4 py-2 border-indigo-500"
+          />
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
