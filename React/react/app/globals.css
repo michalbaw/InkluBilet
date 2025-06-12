@@ -33,3 +33,10 @@ body {
 .rbc-today {
   background-color: var(--color-indigo-50);
 }
+
+.rbc-event-content {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+}

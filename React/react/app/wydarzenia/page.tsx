@@ -7,6 +7,36 @@ import Link from 'next/link';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 
+const getAccessibilityIcon = (accessibility: number) => {
+    switch (accessibility) {
+        case 1:
+            return (
+                <span title="Tłumacz migowego" className="ml-2 text-indigo-500" aria-label="Tłumacz migowego">
+                    👋
+                </span>
+            );
+        case 2:
+            return (
+                <span title="Napisy" className="ml-2 text-indigo-500" aria-label="Napisy">
+                    🅰️
+                </span>
+            );
+        default:
+            return null;
+    }
+};
+
+
+const CustomCalendarEvent = ({ event }: { event: Event }) => {
+    return (
+        <span className="flex items-center gap-1">
+            <span>{event.name}</span>
+            {getAccessibilityIcon(event.accessibility)}
+        </span>
+    );
+};
+
+
 interface Event {
   id: string;
   name: string;
@@ -367,6 +397,9 @@ export default function EventsPage() {
                   startAccessor="time"
                   endAccessor="time"
                   titleAccessor="name"
+                  components={{
+                      event: CustomCalendarEvent
+                  }}
                   style={{ height: 800 }}
                   views={['month']}
                   date={date}
@@ -381,7 +414,10 @@ export default function EventsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900 truncate">{event.name}</h3>
+                        <h3 className="text-lg font-medium text-gray-900 truncate flex items-center">
+                            {event.name}
+                            {getAccessibilityIcon(event.accessibility)}
+                        </h3>
                         <p className="text-sm text-gray-500">Organizowane przez: {event.organisedBy}</p>
                       </div>
                       <p className="mt-2 text-gray-600 whitespace-pre-wrap">{event.description}</p>
